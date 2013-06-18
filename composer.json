@@ -1,0 +1,25 @@
+{
+    "type": "application",
+    "description": "Simple security check based on IPs",
+    "license": "BSD-3",
+    "authors": [
+        {
+            "name": "LoreLLo",
+            "email": "lorenzo.salvadorini@softecspa.it",
+            "homepage": "http://lorello.it"
+        }
+    ],
+
+    "require": {
+        "php": ">=5.3.2",
+        "silex/silex": "1.0.*",
+        "aws/aws-sdk-php-silex": "1.*",
+        "chh/cache-service-provider": "*@dev"
+    },
+    "autoload": {
+        "psr-0": {
+            "": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}

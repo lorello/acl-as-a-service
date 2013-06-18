@@ -1,0 +1,12 @@
+{
+    "includes": ["_aws"],
+    "services": {
+        "default_settings": {
+            "params": {
+                "key": "F0994IT309JFGPOEIUJ",
+                "secret": "sxtw+fj9g0h8934jg49hughg93guh4gh",
+                "region": "eu-west-1"
+            }
+        }
+    }
+}
