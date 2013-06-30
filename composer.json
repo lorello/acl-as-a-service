@@ -14,7 +14,9 @@
         "php": ">=5.3.2",
         "silex/silex": "1.0.*",
         "aws/aws-sdk-php-silex": "1.*",
-        "chh/cache-service-provider": "*@dev"
+        "chh/cache-service-provider": "*@dev",
+        "igorw/config-service-provider": "*@dev",
+        "symfony/yaml": "~2.1"
     },
     "autoload": {
         "psr-0": {
