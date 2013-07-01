@@ -14,6 +14,8 @@ use Silex\Provider\MonologServiceProvider;
 use Aws\Common\Enum\Region;
 use Aws\Silex\AwsServiceProvider;
 use Symfony\Component\Yaml\Dumper;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+
 
 # Create the app instance
 $app = new Silex\Application();
@@ -85,15 +87,24 @@ $app->get(
     function ($ip) use ($app) {
         $filter = new IPFilter(array_merge($app['ip.allowed'], $app['ip.aws']));
         if ($filter->check($ip)) {
-            return 'TRUE';
+            return 'OK';
         }
-        return 'FALSE';
+        return new Response("$ip is not allowed", 401);
     }
 )->assert('ip', '^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$');
 
 $app->get(
     '/update/aws',
     function () use ($app) {
+
+        // get current client IP to authorize request
+        $client_ip = $app['request']->getClientIp();
+        $subRequest = Request::create("/is-allowed/$client_ip");
+        $response = $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
+        if ($response->getStatusCode() > 200) {
+            return new Response("Unauthorized request from $client_ip", 401);
+        }
+
         # TODO: catch errors
         $client = $app['aws']->get('Ec2');
         $iterator = $client->getIterator('describeInstances');
@@ -109,7 +120,8 @@ $app->get(
         $yaml = new Dumper();
         file_put_contents(__DIR__.'/../config/data.yaml', $yaml->dump($data, 2));
         # TODO: redirect to list/aws if OK?
-        return 'OK';
+        return new Response('AWS IPs updated', 201);
+
     }
 );
 
@@ -120,9 +132,19 @@ $app->get(
     }
 )->assert('name', '^(allowed|aws)$');
 
+# TODO: should accept networks?
 $app->put(
     '/allowed/{ip}',
     function ($ip) use ($app) {
+
+        // get current client IP to authorize request
+        $client_ip = $app['request']->getClientIp();
+        $subRequest = Request::create("/is-allowed/$client_ip");
+        $response = $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
+        if ($response->getStatusCode() > 200) {
+            return new Response("Unauthorized request from $client_ip", 401);
+        }
+
         if (ip2long($ip)) {
             $data = array(
                 'ip.allowed' => array_unique(array_merge($app['ip.allowed'], array($ip))),
@@ -132,7 +154,7 @@ $app->put(
             file_put_contents(__DIR__.'/../config/data.yaml', $yaml->dump($data, 2));
             return 'OK';
         }
-        return 'KO';
+        return new Response("Bad request from $client_ip: $ip is not a valid IP", 400);
     }
 );
 
