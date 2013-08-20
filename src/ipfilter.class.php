@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Based on http://www.php.net/manual/en/function.ip2long.php#108812
+ *
+ */
 class IPFilter
 {
     private static $_IP_TYPE_SINGLE = 'single';
