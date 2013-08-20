@@ -1,5 +1,6 @@
+.idea/*
 /phpunit.xml
 /vendor
 /build
-/composer.lock
-/aws-config.json
+composer.lock
+aws-config.json
