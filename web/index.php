@@ -97,7 +97,7 @@ $app->get(
         }
 
         // create a unique array
-        $filter = new IPFilter($app['acl'][$name]));
+        $filter = new IPFilter($app['acl'][$name]);
         if ($filter->check($ip)) {
             return 'OK';
         }
@@ -107,11 +107,12 @@ $app->get(
  ->assert('name', '^[A-Za-z0-9]+$');
 
 $app->get(
-    '/ip/{ip}'
+    '/ip/{ip}',
     function ($ip) use ($app) {
         $app->redirect("/ip/$ip/is-anywhere");
     }
-)
+);
+
 $app->get(
     '/ip/{ip}/is-anywhere',
     function ($ip) use ($app) {
@@ -122,13 +123,13 @@ $app->get(
         }
 
         // create a unique array
-        $filter = new IPFilter($app['acl'][$name]));
+        $filter = new IPFilter($app['acl'][$name]);
         if ($filter->check($ip)) {
             return 'OK';
         }
         return new Response("$ip is not allowed", 401);
     }
-)->assert('ip', '^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$')
+)->assert('ip', '^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$');
 
 
 $app->get(
