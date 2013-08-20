@@ -5,7 +5,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 # TODO: there could be a better way ;-)
-require_once __DIR__ . '/../vendor/ipfilter.class.php';
+require_once __DIR__ . '/src/ipfilter.class.php';
 
 # to use Request object
 use Symfony\Component\HttpFoundation\Request;
