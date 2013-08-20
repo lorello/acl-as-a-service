@@ -61,8 +61,8 @@ $allowed_ips[]='10.0.0.0/8';            # private network
 $app->before(
     function () use ($app) {
 
-        $app['ip.allowed'] = array();
-        $app['ip.aws'] = array();
+        // $app['ip.allowed'] = array();
+        // $app['ip.aws'] = array();
 
         // load current networks
         $app->register(new Igorw\Silex\ConfigServiceProvider(__DIR__."/../config/data.yaml"));
@@ -77,21 +77,59 @@ $app->after(
 $app->get(
     '/',
     function () {
-        $help = "Sintax:\nGET /is-allowed/{IP}\n\n";
+        $help = "Syntax:\nGET /is-allowed/{IP}\n\n";
         return $help;
     }
 );
 
+
+/**
+ * $IP/is-member-of/$LIST
+ * check if an IP is members of a list
+ */
 $app->get(
-    '/is-allowed/{ip}',
+    '/ip/{ip}/is-member-of/{list}',
     function ($ip) use ($app) {
-        $filter = new IPFilter(array_merge($app['ip.allowed'], $app['ip.aws']));
+
+        // check list existence
+        if (!is_array($app['acl'][$name])) {
+            return new Response("Invalid request: list '$name'' does not exists", 412);
+        }
+
+        // create a unique array
+        $filter = new IPFilter($app['acl'][$name]));
         if ($filter->check($ip)) {
             return 'OK';
         }
         return new Response("$ip is not allowed", 401);
     }
-)->assert('ip', '^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$');
+)->assert('ip', '^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$')
+ ->assert('name', '^[A-Za-z0-9]+$');
+
+$app->get(
+    '/ip/{ip}'
+    function ($ip) use ($app) {
+        $app->redirect("/ip/$ip/is-anywhere");
+    }
+)
+$app->get(
+    '/ip/{ip}/is-anywhere',
+    function ($ip) use ($app) {
+
+        // check list existence
+        if (!is_array($app['acl'][$name])) {
+            return new Response("Invalid request: list '$name'' does not exists", 412);
+        }
+
+        // create a unique array
+        $filter = new IPFilter($app['acl'][$name]));
+        if ($filter->check($ip)) {
+            return 'OK';
+        }
+        return new Response("$ip is not allowed", 401);
+    }
+)->assert('ip', '^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$')
+
 
 $app->get(
     '/update/aws',
@@ -125,19 +163,29 @@ $app->get(
     }
 );
 
+
+/**
+ * List all IPs in a list
+ */
 $app->get(
     '/list/{name}',
     function ($name) use ($app) {
-        return implode("\n", $app['ip.'.$name]);
+
+        // check list existence
+        if (!is_array($app['acl'][$name])) {
+            return new Response("Invalid request: list '$name'' does not exists", 412);
+        }
+
+        return implode("\n", $app['acl'][$name]);
     }
-)->assert('name', '^(allowed|aws)$');
+)->assert('name', '^[A-Za-z0-9]+$');
 
 # TODO: should accept networks?
 $app->put(
-    '/allowed/{ip}',
-    function ($ip) use ($app) {
+    '/{name}/{ip}',
+    function ($name, $ip) use ($app) {
 
-        // get current client IP to authorize request
+        // Authorize request
         $client_ip = $app['request']->getClientIp();
         $subRequest = Request::create("/is-allowed/$client_ip");
         $response = $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
@@ -145,16 +193,19 @@ $app->put(
             return new Response("Unauthorized request from $client_ip", 401);
         }
 
-        if (ip2long($ip)) {
-            $data = array(
-                'ip.allowed' => array_unique(array_merge($app['ip.allowed'], array($ip))),
-                'ip.aws' => $app['ip.aws']
-            );
-            $yaml = new Dumper();
-            file_put_contents(__DIR__.'/../config/data.yaml', $yaml->dump($data, 2));
-            return 'OK';
+        // check list existence
+        if (!is_array($app['acl'][$name])) {
+            return new Response("Invalid request from '$client_ip': list '$name'' does not exists", 412);
         }
-        return new Response("Bad request from $client_ip: $ip is not a valid IP", 400);
+        if (!ip2long($ip)) {
+            return new Response("Bad request from $client_ip: $ip is not a valid IP", 400);
+        }
+
+        $app['acl'][$name] = array_unique(array_merge($app['acl'][$name], array($ip)));
+        $yaml = new Dumper();
+        // the parameter '2' of yaml->dump makes output more readable
+        file_put_contents(__DIR__.'/../config/data.yaml', $yaml->dump($app['acl'], 2));
+        return 'OK';
     }
 );
 
