@@ -1,6 +1,6 @@
 .idea/*
-/phpunit.xml
-/vendor
-/build
+vendor/*
+build/*
+phpunit.xml
 composer.lock
 aws-config.json
