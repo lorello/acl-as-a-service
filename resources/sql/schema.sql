@@ -1,10 +1,10 @@
-CREATE TABLE notes (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    note VARCHAR NOT NULL
+CREATE TABLE lists (
+    id     INTEGER PRIMARY KEY AUTOINCREMENT,
+    list   VARCHAR NOT NULL
 );
 
-insert into notes (note) values('one');
-insert into notes (note) values('two');
-insert into notes (note) values('three');
+insert into lists (list) values('one');
+insert into lists (list) values('two');
+insert into lists (list) values('three');
 
 
