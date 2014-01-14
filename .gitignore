@@ -1,6 +1,5 @@
-.idea/*
-vendor/*
-build/*
-phpunit.xml
-composer.lock
-aws-config.json
+vendor
+app/logs/*.log
+*~
+.idea
+app.db

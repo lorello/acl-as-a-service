@@ -6,48 +6,42 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 
-class NotesController
+class ListsController
 {
-
-    protected $notesService;
+    protected $listsService;
 
     public function __construct($service)
     {
-        $this->notesService = $service;
+        $this->listsService = $service;
     }
 
     public function getAll()
     {
-        return new JsonResponse($this->notesService->getAll());
+        return new JsonResponse($this->listsService->getAll());
     }
 
     public function save(Request $request)
     {
-
-        $note = $this->getDataFromRequest($request);
-        return new JsonResponse(array("id" => $this->notesService->save($note)));
-
+        $list = $this->getDataFromRequest($request);
+        return new JsonResponse(array('id' => $this->listsService->save($list)));
     }
 
     public function update($id, Request $request)
     {
-        $note = $this->getDataFromRequest($request);
-        $this->notesService->update($id, $note);
-        return new JsonResponse($note);
-
+        $list = $this->getDataFromRequest($request);
+        $this->listsService->update($id, $list);
+        return new JsonResponse($list);
     }
 
     public function delete($id)
     {
-
-        return new JsonResponse($this->notesService->delete($id));
-
+        return new JsonResponse($this->listsService->delete($id));
     }
 
     public function getDataFromRequest(Request $request)
     {
-        return $note = array(
-            "note" => $request->request->get("note")
+        return $list = array(
+            'list' => $request->request->get('list')
         );
     }
 }

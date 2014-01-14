@@ -12,13 +12,12 @@ class RoutesLoader
     {
         $this->app = $app;
         $this->instantiateControllers();
-
     }
 
     private function instantiateControllers()
     {
-        $this->app['notes.controller'] = $this->app->share(function () {
-            return new Controllers\NotesController($this->app['notes.service']);
+        $this->app['lists.controller'] = $this->app->share(function () {
+            return new Controllers\ListsController($this->app['lists.service']);
         });
     }
 
@@ -26,10 +25,10 @@ class RoutesLoader
     {
         $api = $this->app["controllers_factory"];
 
-        $api->get('/notes', "notes.controller:getAll");
-        $api->post('/notes', "notes.controller:save");
-        $api->post('/notes/{id}', "notes.controller:update");
-        $api->delete('/notes/{id}', "notes.controller:delete");
+        $api->get('/lists', "lists.controller:getAll");
+        $api->post('/lists/{id}', "lists.controller:save");
+        $api->put('/lists/{id}', "lists.controller:update");
+        $api->delete('/lists/{id}', "lists.controller:delete");
 
         $this->app->mount($this->app["api.endpoint"].'/'.$this->app["api.version"], $api);
     }
