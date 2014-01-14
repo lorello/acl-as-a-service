@@ -1,14 +1,15 @@
 {
-	"name": "lorello/acl-as-a-service",
-	"description": "A simple rest api to manage IP-based Access Control Lists",
+	"name": "vesparny/silex-simple-rest",
+	"type": "library",
+	"description": "A simple silex skeleton for rest api",
 	"keywords": [
-		"framework", "silex", "rest", "api", "security", "acl", "ip"
+		"framework", "silex", "rest", "api"
 	],
-	"homepage": "http://github.com/lorello/acl-as-a-service",
+	"homepage": "http://github.com/vesparny/silex-simple-rest",
 	"license": "MIT",
 	"authors": [{
-		"name": "Lorenzo Salvadorini",
-		"email": "lorenzo.salvadorini@softecspa.it"
+		"name": "Alessandro Arnodo",
+		"email": "alessandro@arnodo.net"
 	}],
 	"require": {
 		"php": ">=5.3.0"
