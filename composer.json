@@ -1,27 +1,32 @@
 {
-    "type": "application",
-    "description": "Simple security check based on IPs",
-    "license": "BSD-3",
-    "authors": [
-        {
-            "name": "LoreLLo",
-            "email": "lorenzo.salvadorini@softecspa.it",
-            "homepage": "http://lorello.it"
-        }
-    ],
-
-    "require": {
-        "php": ">=5.3.2",
-        "silex/silex": "1.0.*",
-        "aws/aws-sdk-php-silex": "1.*",
-        "chh/cache-service-provider": "*@dev",
-        "igorw/config-service-provider": "*@dev",
-        "symfony/yaml": "~2.1"
-    },
-    "autoload": {
-        "psr-0": {
-            "": "src/"
-        }
-    },
-    "minimum-stability": "dev"
+	"name": "lorello/acl-as-a-service",
+	"description": "A simple rest api to manage IP-based Access Control Lists",
+	"keywords": [
+		"framework", "silex", "rest", "api", "security", "acl", "ip"
+	],
+	"homepage": "http://github.com/lorello/acl-as-a-service",
+	"license": "MIT",
+	"authors": [{
+		"name": "Lorenzo Salvadorini",
+		"email": "lorenzo.salvadorini@softecspa.it"
+	}],
+	"require": {
+		"php": ">=5.3.0"
+	},
+	"require": {
+		"silex/silex": "~1.1",
+		"monolog/monolog": "~1.6",
+		"twig/twig": "~1.14",
+		"doctrine/dbal": "~2.4",
+		"nesbot/Carbon": "~1.6"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "~3.7",
+		"mockery/mockery": "~0.8.0"
+	},
+	"autoload": {
+		"psr-0": {
+			"App": "src/"
+		}
+	}
 }

@@ -5,4 +5,19 @@ Setup
 Rename aws-config-sample.json in aws-config.json and change credentials to query
 AWS.
 
+GET     /lists            get the lists of lists
+POST    /lists/$name      create a new list and populate it with the BODY
+PUT     /lists/$name      replace existing list with the body contents
+DELETE  /lists/$name      remove the list
+
+GET     /lists/$name      get the list of IPs present in $list
+GET     /lists/$name/$ip  check if $ip is present in list $list
+POST    /lists/$name/$ip  add $ip to list $name
+DELETE  /lists/$name/$ip  remove $ip from list $name
+
+The PUT and DELETE methods are idempotent methods. The GET method is a safe method (or nullipotent), meaning that calling it produces no side-effects.
+
+Sometimes in the future a users entity should be added and each user should create his own list of IPs
+
+
 
