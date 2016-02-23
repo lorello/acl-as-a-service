@@ -10,5 +10,4 @@ class BaseService
     {
         $this->db = $db;
     }
-
 }

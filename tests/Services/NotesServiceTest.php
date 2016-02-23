@@ -1,28 +1,27 @@
 <?php
 
 namespace Tests\Services;
+
+use App\Services\NotesService;
 use Silex\Application;
 use Silex\Provider\DoctrineServiceProvider;
-use App\Services\NotesService;
-
 
 class NotesServiceTest extends \PHPUnit_Framework_TestCase
 {
-
     private $noteService;
 
     public function setUp()
     {
         $app = new Application();
-        $app->register(new DoctrineServiceProvider(), array(
-            "db.options" => array(
-                "driver" => "pdo_sqlite",
-                "memory" => true
-            ),
-        ));
-        $this->noteService = new NotesService($app["db"]);
+        $app->register(new DoctrineServiceProvider(), [
+            'db.options' => [
+                'driver' => 'pdo_sqlite',
+                'memory' => true,
+            ],
+        ]);
+        $this->noteService = new NotesService($app['db']);
 
-        $stmt = $app["db"]->prepare("CREATE TABLE notes (id INTEGER PRIMARY KEY AUTOINCREMENT,note VARCHAR NOT NULL)");
+        $stmt = $app['db']->prepare('CREATE TABLE notes (id INTEGER PRIMARY KEY AUTOINCREMENT,note VARCHAR NOT NULL)');
         $stmt->execute();
     }
 
@@ -32,32 +31,30 @@ class NotesServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($data);
     }
 
-    function testSave()
+    public function testSave()
     {
-        $note = array("note" => "arny");
+        $note = ['note' => 'arny'];
         $data = $this->noteService->save($note);
         $data = $this->noteService->getAll();
         $this->assertEquals(1, count($data));
     }
 
-    function testUpdate()
+    public function testUpdate()
     {
-        $note = array("note" => "arny1");
+        $note = ['note' => 'arny1'];
         $this->noteService->save($note);
-        $note = array("note" => "arny2");
+        $note = ['note' => 'arny2'];
         $this->noteService->update(1, $note);
         $data = $this->noteService->getAll();
-        $this->assertEquals("arny2", $data[0]["note"]);
-
+        $this->assertEquals('arny2', $data[0]['note']);
     }
 
-    function testDelete()
+    public function testDelete()
     {
-        $note = array("note" => "arny1");
+        $note = ['note' => 'arny1'];
         $this->noteService->save($note);
         $this->noteService->delete(1);
         $data = $this->noteService->getAll();
         $this->assertEquals(0, count($data));
     }
-
 }

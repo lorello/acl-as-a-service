@@ -1,10 +1,9 @@
 <?php
 
 namespace App\Controllers;
+
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
 
 class ListsController
 {
@@ -23,13 +22,15 @@ class ListsController
     public function save(Request $request)
     {
         $list = $this->getDataFromRequest($request);
-        return new JsonResponse(array('id' => $this->listsService->save($list)));
+
+        return new JsonResponse(['id' => $this->listsService->save($list)]);
     }
 
     public function update($id, Request $request)
     {
         $list = $this->getDataFromRequest($request);
         $this->listsService->update($id, $list);
+
         return new JsonResponse($list);
     }
 
@@ -40,8 +41,8 @@ class ListsController
 
     public function getDataFromRequest(Request $request)
     {
-        return $list = array(
-            'list' => $request->request->get('list')
-        );
+        return $list = [
+            'list' => $request->request->get('list'),
+        ];
     }
 }
