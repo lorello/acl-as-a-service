@@ -23,14 +23,13 @@ class RoutesLoader
 
     public function bindRoutesToControllers()
     {
-        $api = $this->app["controllers_factory"];
+        $api = $this->app['controllers_factory'];
 
-        $api->get('/lists', "lists.controller:getAll");
-        $api->post('/lists/{id}', "lists.controller:save");
-        $api->put('/lists/{id}', "lists.controller:update");
-        $api->delete('/lists/{id}', "lists.controller:delete");
+        $api->get('/lists', 'lists.controller:getAll');
+        $api->post('/lists/{id}', 'lists.controller:save');
+        $api->put('/lists/{id}', 'lists.controller:update');
+        $api->delete('/lists/{id}', 'lists.controller:delete');
 
-        $this->app->mount($this->app["api.endpoint"].'/'.$this->app["api.version"], $api);
+        $this->app->mount($this->app['api.endpoint'].'/'.$this->app['api.version'], $api);
     }
 }
-

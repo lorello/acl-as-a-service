@@ -1,7 +1,6 @@
 <?php
 /**
- * Based on http://www.php.net/manual/en/function.ip2long.php#108812
- *
+ * Based on http://www.php.net/manual/en/function.ip2long.php#108812.
  */
 class IPFilter
 {
@@ -9,24 +8,22 @@ class IPFilter
     private static $_IP_TYPE_WILDCARD = 'wildcard';
     private static $_IP_TYPE_MASK = 'mask';
     private static $_IP_TYPE_SECTION = 'section';
-    private $_allowed_ips = array();
+    private $_allowed_ips = [];
 
     public function __construct($allowed_ips)
     {
-        $this -> _allowed_ips = $allowed_ips;
+        $this->_allowed_ips = $allowed_ips;
     }
 
     public function check($ip, $allowed_ips = null)
     {
         $allowed_ips = $allowed_ips ? $allowed_ips : $this->_allowed_ips;
 
-        foreach($allowed_ips as $allowed_ip)
-        {
-            $type = $this -> _judge_ip_type($allowed_ip);
-            $sub_rst = call_user_func(array($this,'_sub_checker_' . $type), $allowed_ip, $ip);
+        foreach ($allowed_ips as $allowed_ip) {
+            $type = $this->_judge_ip_type($allowed_ip);
+            $sub_rst = call_user_func([$this, '_sub_checker_'.$type], $allowed_ip, $ip);
 
-            if ($sub_rst)
-            {
+            if ($sub_rst) {
                 return true;
             }
         }
@@ -36,23 +33,19 @@ class IPFilter
 
     private function _judge_ip_type($ip)
     {
-        if (strpos($ip, '*'))
-        {
+        if (strpos($ip, '*')) {
             return self :: $_IP_TYPE_WILDCARD;
         }
 
-        if (strpos($ip, '/'))
-        {
+        if (strpos($ip, '/')) {
             return self :: $_IP_TYPE_MASK;
         }
 
-        if (strpos($ip, '-'))
-        {
+        if (strpos($ip, '-')) {
             return self :: $_IP_TYPE_SECTION;
         }
 
-        if (ip2long($ip))
-        {
+        if (ip2long($ip)) {
             return self :: $_IP_TYPE_SINGLE;
         }
 
@@ -61,23 +54,18 @@ class IPFilter
 
     private function _sub_checker_single($allowed_ip, $ip)
     {
-        return (ip2long($allowed_ip) == ip2long($ip));
+        return ip2long($allowed_ip) == ip2long($ip);
     }
 
     private function _sub_checker_wildcard($allowed_ip, $ip)
     {
         $allowed_ip_arr = explode('.', $allowed_ip);
         $ip_arr = explode('.', $ip);
-        for($i = 0;$i < count($allowed_ip_arr);$i++)
-        {
-            if ($allowed_ip_arr[$i] == '*')
-            {
+        for ($i = 0; $i < count($allowed_ip_arr); $i++) {
+            if ($allowed_ip_arr[$i] == '*') {
                 return true;
-            }
-            else
-            {
-                if (false == ($allowed_ip_arr[$i] == $ip_arr[$i]))
-                {
+            } else {
+                if (false == ($allowed_ip_arr[$i] == $ip_arr[$i])) {
                     return false;
                 }
             }
@@ -88,10 +76,13 @@ class IPFilter
     {
         list($allowed_ip_ip, $allowed_ip_mask) = explode('/', $allowed_ip);
 
-        if($allowed_ip_mask <= 0){ return false; }
-        $ip_binary_string = sprintf("%032b",ip2long($ip));
-        $net_binary_string = sprintf("%032b",ip2long($allowed_ip_ip));
-        return (substr_compare($ip_binary_string,$net_binary_string,0,$allowed_ip_mask) === 0);
+        if ($allowed_ip_mask <= 0) {
+            return false;
+        }
+        $ip_binary_string = sprintf('%032b', ip2long($ip));
+        $net_binary_string = sprintf('%032b', ip2long($allowed_ip_ip));
+
+        return substr_compare($ip_binary_string, $net_binary_string, 0, $allowed_ip_mask) === 0;
     }
 
     private function _sub_checker_section($allowed_ip, $ip)
@@ -100,6 +91,7 @@ class IPFilter
         $begin = ip2long($begin);
         $end = ip2long($end);
         $ip = ip2long($ip);
-        return ($ip >= $begin && $ip <= $end);
+
+        return $ip >= $begin && $ip <= $end;
     }
 }
